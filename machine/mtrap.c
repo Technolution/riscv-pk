@@ -71,7 +71,10 @@ uintptr_t timer_interrupt()
 
 static uintptr_t mcall_console_putchar(uint8_t ch)
 {
-  do_tohost_fromhost(1, 1, ch);
+  //do_tohost_fromhost(1, 1, ch);
+  uint8_t *p = (uint8_t *)(0x40000000 + 0x1000);
+  *p = ch;
+  
   return 0;
 }
 
@@ -224,7 +227,7 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
       retval = mcall_console_putchar(arg0);
       break;
     case MCALL_CONSOLE_GETCHAR:
-      retval = mcall_console_getchar();
+      retval = 'H'; //mcall_console_getchar();      TODO HEN: Fix this
       break;
     case MCALL_HTIF_SYSCALL:
       retval = mcall_htif_syscall(arg0);
