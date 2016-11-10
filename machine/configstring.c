@@ -34,6 +34,13 @@ static void query_plic(const char* config_string)
   plic_ndevs = get_uint(res);
 }
 
+static void query_uart(const char* config_string)
+{
+  query_result res = query_config_string(config_string, "uart{addr");
+  assert(res.start);
+  uart_base = (void*)(uintptr_t)get_uint(res);
+}
+
 static void query_hart_plic(const char* config_string, hls_t* hls, int core, int hart)
 {
   char buf[32];
@@ -98,5 +105,6 @@ void parse_config_string()
   query_mem(s);
   query_plic(s);
   query_rtc(s);
+  query_uart(s);
   query_harts(s);
 }

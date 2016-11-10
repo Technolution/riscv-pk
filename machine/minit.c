@@ -11,6 +11,7 @@ uintptr_t mem_size;
 uintptr_t num_harts;
 volatile uint64_t* mtime;
 volatile uint32_t* plic_priorities;
+volatile uint32_t* uart_base;
 size_t plic_ndevs;
 
 static void mstatus_init()

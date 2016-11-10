@@ -71,9 +71,7 @@ uintptr_t timer_interrupt()
 
 static uintptr_t mcall_console_putchar(uint8_t ch)
 {
-  //do_tohost_fromhost(1, 1, ch);
-  uint8_t *p = (uint8_t *)(0x40000000 + 0x1000);
-  *p = ch;
+  *(uint8_t*)&(uart_base[0]) = ch;
   
   return 0;
 }

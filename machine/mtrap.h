@@ -34,6 +34,7 @@ extern uintptr_t mem_size;
 extern uintptr_t num_harts;
 extern volatile uint64_t* mtime;
 extern volatile uint32_t* plic_priorities;
+extern volatile uint32_t* uart_base;
 extern size_t plic_ndevs;
 
 typedef struct {
