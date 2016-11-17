@@ -71,7 +71,11 @@ uintptr_t timer_interrupt()
 
 static uintptr_t mcall_console_putchar(uint8_t ch)
 {
-  *(uint8_t*)&(uart_base[0]) = ch;
+  static int buffer_space = 0;
+
+  while (buffer_space < 1) buffer_space = uart_base[7];
+  *(uint8_t*)&(uart_base[4]) = ch;
+  buffer_space--;
   
   return 0;
 }
