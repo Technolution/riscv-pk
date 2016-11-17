@@ -80,6 +80,18 @@ static uintptr_t mcall_console_putchar(uint8_t ch)
   return 0;
 }
 
+static uint8_t mcall_console_getchar(void)
+{
+  static int bytes_av = 0;
+  uint8_t ret;
+
+  while (bytes_av < 1) bytes_av = uart_base[10];
+  ret = *(uint8_t*)&(uart_base[8]);
+  bytes_av--;
+
+  return ret;
+}
+
 static uintptr_t mcall_htif_syscall(uintptr_t magic_mem)
 {
   do_tohost_fromhost(0, 0, magic_mem);
@@ -134,15 +146,6 @@ static void reset_ssip()
 
   if (HLS()->sipi_pending || HLS()->console_ibuf > 0)
     set_csr(mip, MIP_SSIP);
-}
-
-static uintptr_t mcall_console_getchar()
-{
-  int ch = atomic_swap(&HLS()->console_ibuf, -1);
-  if (ch >= 0)
-    request_htif_keyboard_interrupt();
-  reset_ssip();
-  return ch - 1;
 }
 
 static uintptr_t mcall_clear_ipi()
@@ -229,7 +232,7 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
       retval = mcall_console_putchar(arg0);
       break;
     case MCALL_CONSOLE_GETCHAR:
-      retval = 'H'; //mcall_console_getchar();      TODO HEN: Fix this
+      retval = mcall_console_getchar();
       break;
     case MCALL_HTIF_SYSCALL:
       retval = mcall_htif_syscall(arg0);
