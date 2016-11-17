@@ -74,7 +74,7 @@ static uintptr_t mcall_console_putchar(uint8_t ch)
   static int buffer_space = 0;
 
   while (buffer_space < 1) buffer_space = uart_base[7];
-  *(uint8_t*)&(uart_base[4]) = ch;
+  uart_base[4] = ch;
   buffer_space--;
   
   return 0;
@@ -86,7 +86,7 @@ static uint8_t mcall_console_getchar(void)
   uint8_t ret;
 
   while (bytes_av < 1) bytes_av = uart_base[10];
-  ret = *(uint8_t*)&(uart_base[8]);
+  ret = uart_base[8];
   bytes_av--;
 
   return ret;
