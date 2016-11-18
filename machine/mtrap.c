@@ -80,16 +80,18 @@ static uintptr_t mcall_console_putchar(uint8_t ch)
   return 0;
 }
 
-static uint8_t mcall_console_getchar(void)
+static uintptr_t mcall_console_getchar(void)
 {
   static int bytes_av = 0;
-  uint8_t ret;
 
-  while (bytes_av < 1) bytes_av = uart_base[10];
-  ret = uart_base[8];
-  bytes_av--;
-
-  return ret;
+  if (bytes_av == 0) bytes_av = uart_base[10];
+  if (bytes_av == 0) {
+    return (uintptr_t)-1;
+  } else {
+    uint8_t ret = uart_base[8];
+    bytes_av--;
+    return (uintptr_t)ret;
+  }
 }
 
 static uintptr_t mcall_htif_syscall(uintptr_t magic_mem)
