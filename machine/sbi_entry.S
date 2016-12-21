@@ -72,11 +72,15 @@ sbi_base:
 
   # mask_interrupt
   .align 4
-  tail __sbi_mask_interrupt
+  li a7, MCALL_INTERRUPT_MASK
+  ecall
+  ret
 
   # unmask_interrupt
   .align 4
-  tail __sbi_unmask_interrupt
+  li a7, MCALL_INTERRUPT_UNMASK
+  ecall
+  ret
 
   # remote_sfence_vm
   .align 4

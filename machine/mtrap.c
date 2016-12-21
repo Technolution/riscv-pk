@@ -235,6 +235,41 @@ static uintptr_t mcall_config_string_size(void)
   return strlen(s)+1;
 }
 
+// use the same function for masking and unmasking the interrupts
+uintptr_t mcall_change_interrupt(uintptr_t which, int mask)
+{
+  // check if it is a valid interrupt
+  if (which > plic_ndevs) {
+      printm("Invalid interrupt id %d %d\n", which, plic_ndevs);
+      return -1;
+  }
+  // interrupt 0 is invalid according to the spec
+  if (which == 0) {
+      printm("Invalid interrupt id %d\n", which);
+      return -1;
+  }
+  // calculate the register offset
+  // bytes * 8 bits in a register
+  uintptr_t regOffset = which / (sizeof(uintptr_t) * 8);
+  uintptr_t bitOffset = which - regOffset * (sizeof(uintptr_t) * 8);
+  if (mask) {
+      HLS()->plic_ie[regOffset] &= ~(1UL << bitOffset);
+  } else {
+      HLS()->plic_ie[regOffset] |= 1UL << bitOffset;
+  }
+  return 0;
+}
+
+uintptr_t mcall_mask_interrupt(uintptr_t which)
+{
+  return mcall_change_interrupt(which, 1);
+}
+
+uintptr_t mcall_unmask_interrupt(uintptr_t which)
+{
+    return mcall_change_interrupt(which, 0);
+}
+
 void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
   uintptr_t n = regs[17], arg0 = regs[10], arg1 = regs[11], retval;
@@ -279,6 +314,12 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
       break;
     case MCALL_CONFIG_STRING_SIZE:
       retval = mcall_config_string_size();
+      break;
+    case MCALL_INTERRUPT_MASK:
+      retval = mcall_mask_interrupt(arg0);
+      break;
+    case MCALL_INTERRUPT_UNMASK:
+      retval = mcall_unmask_interrupt(arg0);
       break;
     default:
       retval = -ENOSYS;

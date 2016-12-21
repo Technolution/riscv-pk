@@ -125,9 +125,8 @@ static void hart_plic_init()
 
   size_t ie_words = plic_ndevs / sizeof(uintptr_t) + 1;
   for (size_t i = 0; i < ie_words; i++)
-    HLS()->plic_s_ie[i] = ULONG_MAX;
-  *HLS()->plic_m_thresh = 1;
-  *HLS()->plic_s_thresh = 0;
+    HLS()->plic_ie[i] = 0;
+  *HLS()->plic_thresh = 0;
 }
 
 void init_first_hart()
