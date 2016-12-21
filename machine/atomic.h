@@ -20,6 +20,7 @@ typedef struct { int lock; } spinlock_t;
 #ifdef __riscv_atomic
 # define atomic_add(ptr, inc) __sync_fetch_and_add(ptr, inc)
 # define atomic_or(ptr, inc) __sync_fetch_and_or(ptr, inc)
+# define atomic_and(ptr, inc) __sync_fetch_and_and(ptr, inc)
 # define atomic_swap(ptr, swp) __sync_lock_test_and_set(ptr, swp)
 # define atomic_cas(ptr, cmp, swp) __sync_val_compare_and_swap(ptr, cmp, swp)
 #else
@@ -31,6 +32,7 @@ typedef struct { int lock; } spinlock_t;
   res; })
 # define atomic_add(ptr, inc) atomic_binop(ptr, inc, res + (inc))
 # define atomic_or(ptr, inc) atomic_binop(ptr, inc, res | (inc))
+# define atomic_and(ptr, inc) atomic_binop(ptr, inc, res & (inc))
 # define atomic_swap(ptr, inc) atomic_binop(ptr, inc, (inc))
 # define atomic_cas(ptr, cmp, swp) ({ \
   long flags = disable_irqsave(); \
