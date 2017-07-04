@@ -86,8 +86,8 @@ AC_ARG_ENABLE([32bit],
 case "${BUILD_32BIT}" in
   yes|default)
 	echo "Building 32-bit pk"
-	CFLAGS="$default_CFLAGS -m32"
-	LDFLAGS="-m32"
+	CFLAGS="$default_CFLAGS"
+	LDFLAGS=
 	install_subdir="riscv32-unknown-elf"
 	;;
   *)
