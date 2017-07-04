@@ -43,7 +43,7 @@ static void query_uart(const char* config_string)
 
 static void query_hart_plic(const char* config_string, hls_t* hls, int core, int hart)
 {
-  char buf[32];
+  char buf[36];
   snprintf(buf, sizeof buf, "plic{%d{%d{ie", core, hart);
   query_result res = query_config_string(config_string, buf);
   if (res.start)
@@ -59,7 +59,7 @@ static void query_harts(const char* config_string)
 {
   for (int core = 0, hart; ; core++) {
     for (hart = 0; ; hart++) {
-      char buf[32];
+      char buf[42];
       snprintf(buf, sizeof buf, "core{%d{%d{ipi", core, hart);
       query_result res = query_config_string(config_string, buf);
       if (!res.start)
