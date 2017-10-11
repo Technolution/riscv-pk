@@ -123,7 +123,8 @@ static void hart_plic_init()
   if (!plic_ndevs)
     return;
 
-  size_t ie_words = plic_ndevs / sizeof(uintptr_t) + 1;
+  // a bit per interrupt, and interrupt 0 is not used
+  size_t ie_words = (plic_ndevs / (sizeof(uintptr_t) * 8)) + 1;
   for (size_t i = 0; i < ie_words; i++)
     HLS()->plic_ie[i] = 0;
   *HLS()->plic_thresh = 0;
